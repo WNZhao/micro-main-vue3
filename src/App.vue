@@ -1,26 +1,37 @@
+<!--
+ * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @Date: 2025-04-03 17:03:48
+ * @LastEditors: Walker zw37520@gmail.com
+ * @LastEditTime: 2025-04-04 19:23:04
+ * @FilePath: /micro-main-vue3/src/App.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import CommonHeader from '@/components/CommonHeader.vue'
+import CommonFooter from './components/CommonFooter.vue'
+import MainContainer from '@/components/MainContainer.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div class="app-container">
+    <common-header />
+    <main-container />
+    <common-footer />
+  </div>
 </template>
 
 <style scoped>
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;

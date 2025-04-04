@@ -12,6 +12,21 @@ export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',
     files: ['**/*.{ts,mts,tsx,vue}'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+          vars: 'all',
+          args: 'after-used',
+          caughtErrors: 'none',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
+      'vue/no-unused-components': 'off', // 禁用未使用组件的检查
+    },
   },
 
   globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
