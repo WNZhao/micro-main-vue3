@@ -26,6 +26,7 @@ export default defineConfigWithVueTs(
         },
       ],
       'vue/no-unused-components': 'off', // 禁用未使用组件的检查
+      'vue/multi-word-component-names': 'off', // 禁用多单词组件名称规则
     },
   },
 

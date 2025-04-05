@@ -2,21 +2,27 @@
  * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
  * @Date: 2025-04-03 17:03:48
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-04 19:23:04
+ * @LastEditTime: 2025-04-05 16:31:27
  * @FilePath: /micro-main-vue3/src/App.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script setup lang="ts">
-import CommonHeader from '@/components/CommonHeader.vue'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import CommonHeader from './components/CommonHeader.vue'
 import CommonFooter from './components/CommonFooter.vue'
-import MainContainer from '@/components/MainContainer.vue'
+
+const route = useRoute()
+const isLoginPage = computed(() => route.path === '/login')
 </script>
 
 <template>
-  <div class="app-container">
-    <common-header />
-    <main-container />
-    <common-footer />
+  <div class="app-container" :class="{ 'login-page': isLoginPage }">
+    <common-header v-if="!isLoginPage" />
+    <main class="main-content" :class="{ 'login-content': isLoginPage }">
+      <router-view></router-view>
+    </main>
+    <common-footer v-if="!isLoginPage" />
   </div>
 </template>
 
@@ -27,9 +33,21 @@ import MainContainer from '@/components/MainContainer.vue'
   flex-direction: column;
 }
 
+.app-container.login-page {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background-image: url('@/assets/images/trial_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .main-content {
   flex: 1;
   padding: 20px;
+}
+
+.main-content.login-content {
+  padding: 0;
 }
 
 header {
