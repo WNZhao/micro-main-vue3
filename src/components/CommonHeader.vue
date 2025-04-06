@@ -2,7 +2,7 @@
  * @Author: Walker zw37520@gmail.com
  * @Date: 2025-04-04 14:29:05
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-06 15:31:17
+ * @LastEditTime: 2025-04-06 16:39:36
  * @FilePath: /micro-main-vue3/src/components/CommonHeader.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -25,10 +25,10 @@
         <el-menu-item index="about">关于</el-menu-item>
       </div>
       <div class="right-section">
-        <template v-if="userStore.token">
+        <template v-if="isLoggedIn">
           <el-dropdown @command="handleCommand">
             <span class="user-info">
-              {{ userStore.userInfo?.username }}
+              {{ username }}
               <el-icon class="el-icon--right"><arrow-down /></el-icon>
             </span>
             <template #dropdown>
@@ -54,17 +54,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { logout } from '@/api/loginApi'
 import { ElMessage } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
+import { logout } from '@/api/loginApi'
+import microApp from '@micro-zoe/micro-app'
+import { getGlobalData, setGlobalData, clearGlobalData } from '@/utils/globalData'
 
 const router = useRouter()
 const route = useRoute()
-const userStore = useUserStore()
 const activeIndex = ref('home')
+const isLoggedIn = ref(false)
+const username = ref('')
+
+// 更新登录状态的函数
+const updateLoginState = () => {
+  const globalData = getGlobalData()
+  console.log('获取 globalData:', globalData)
+
+  if (globalData && globalData.token) {
+    isLoggedIn.value = true
+    username.value = globalData.userInfo?.username || ''
+  } else {
+    isLoggedIn.value = false
+    username.value = ''
+  }
+}
+
+// 监听 microApp 的 globalData 变化
+watch(
+  () => microApp.getGlobalData(),
+  (newVal) => {
+    console.log('globalData 变化:', newVal)
+    updateLoginState()
+  },
+  { immediate: true, deep: true },
+)
+
+// 组件挂载时也更新一次状态
+onMounted(() => {
+  console.log('组件挂载，更新状态')
+  updateLoginState()
+})
 
 // 根据路由路径设置激活的菜单项
 const setActiveIndex = () => {
@@ -88,13 +120,7 @@ watch(
   },
 )
 
-// 组件挂载时设置初始激活项
-onMounted(() => {
-  setActiveIndex()
-})
-
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
+const handleSelect = (key: string) => {
   switch (key) {
     case 'home':
       router.push({ name: 'childHome' })
@@ -116,14 +142,15 @@ const handleCommand = async (command: string) => {
     try {
       const res = await logout()
       if (res.code === 200) {
-        userStore.clearUserInfo()
+        // 清除 globalData
+        clearGlobalData()
         ElMessage.success('退出成功')
         router.push('/login')
       } else {
-        ElMessage.error('退出失败，请稍后重试')
+        ElMessage.error(res.message || '退出失败')
       }
     } catch (error) {
-      ElMessage.error('退出失败，请稍后重试')
+      console.error('退出失败:', error)
     }
   }
 }
