@@ -2,12 +2,12 @@
  * @Author: Walker zw37520@gmail.com
  * @Date: 2025-04-03 17:03:48
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-05 16:10:40
+ * @LastEditTime: 2025-04-06 15:24:20
  * @FilePath: /micro-main-vue3/src/router/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { createRouter, createWebHistory } from 'vue-router'
-
+import { useUserStore } from '@/stores/user'
 import UserLogin from '@/views/main/UserLogin.vue'
 
 const router = createRouter({
@@ -40,23 +40,66 @@ const router = createRouter({
       path: '/main/childHome',
       name: 'childHome',
       component: () => import('@/views/child/ChildHome.vue'),
+      meta: {
+        title: '首页',
+        keepAlive: true,
+        requireAuth: true,
+      },
     },
     {
       path: '/main/childJob',
       name: 'childJob',
       component: () => import('@/views/child/ChildJob.vue'),
+      meta: {
+        title: '职位',
+        keepAlive: true,
+        requireAuth: true,
+      },
     },
     {
       path: '/main/childEnterprise',
       name: 'childEnterprise',
       component: () => import('@/views/child/ChildEnterprise.vue'),
+      meta: {
+        title: '企业',
+        keepAlive: true,
+        requireAuth: true,
+      },
     },
     {
       path: '/main/childAbout',
       name: 'childAbout',
       component: () => import('@/views/child/ChildAbout.vue'),
+      meta: {
+        title: '关于',
+        keepAlive: true,
+        requireAuth: true,
+      },
     },
   ],
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const token = userStore.token
+
+  // 设置页面标题
+  document.title = to.meta.title ? `${to.meta.title} - DOSS直聘` : 'DOSS直聘'
+
+  if (to.meta.requireAuth) {
+    if (token) {
+      next()
+    } else {
+      next('/login')
+    }
+  } else {
+    if (to.path === '/login' && token) {
+      next('/main/childHome')
+    } else {
+      next()
+    }
+  }
 })
 
 export default router

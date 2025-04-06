@@ -2,7 +2,7 @@
  * @Author: Walker zw37520@gmail.com
  * @Date: 2025-04-04 14:29:05
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-04 17:45:53
+ * @LastEditTime: 2025-04-06 15:31:17
  * @FilePath: /micro-main-vue3/src/components/CommonHeader.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -25,7 +25,27 @@
         <el-menu-item index="about">关于</el-menu-item>
       </div>
       <div class="right-section">
-        <el-button round plain size="small" class="login-btn" @click="$router.push('/login')">
+        <template v-if="userStore.token">
+          <el-dropdown @command="handleCommand">
+            <span class="user-info">
+              {{ userStore.userInfo?.username }}
+              <el-icon class="el-icon--right"><arrow-down /></el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+        <el-button
+          v-else
+          round
+          plain
+          size="small"
+          class="login-btn"
+          @click="$router.push('/login')"
+        >
           登录
         </el-button>
       </div>
@@ -36,9 +56,14 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { logout } from '@/api/loginApi'
+import { ElMessage } from 'element-plus'
+import { ArrowDown } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 const activeIndex = ref('home')
 
 // 根据路由路径设置激活的菜单项
@@ -83,6 +108,23 @@ const handleSelect = (key: string, keyPath: string[]) => {
     case 'about':
       router.push({ name: 'childAbout' })
       break
+  }
+}
+
+const handleCommand = async (command: string) => {
+  if (command === 'logout') {
+    try {
+      const res = await logout()
+      if (res.code === 200) {
+        userStore.clearUserInfo()
+        ElMessage.success('退出成功')
+        router.push('/login')
+      } else {
+        ElMessage.error('退出失败，请稍后重试')
+      }
+    } catch (error) {
+      ElMessage.error('退出失败，请稍后重试')
+    }
   }
 }
 </script>
@@ -135,6 +177,19 @@ const handleSelect = (key: string, keyPath: string[]) => {
       background-color: #fff;
       color: #202329;
       border-color: #fff;
+    }
+  }
+
+  .user-info {
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    padding: 0 10px;
+    height: 100%;
+    &:hover {
+      color: #ffd04b;
     }
   }
 }

@@ -2,7 +2,7 @@
  * @Author: Walker zw37520@gmail.com
  * @Date: 2025-04-04 14:29:05
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-05 16:36:30
+ * @LastEditTime: 2025-04-06 15:11:28
  * @FilePath: /micro-main-vue3/src/views/main/UserLogin.vue
  * @Description: 登录页面组件
 -->
@@ -24,7 +24,13 @@
       <div class="right-section">
         <div class="login-box">
           <h1 class="title">DOSS直聘 | 新一代数字化招聘平台</h1>
-          <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form">
+          <el-form
+            ref="loginFormRef"
+            :model="loginForm"
+            :rules="loginRules"
+            class="login-form"
+            @keyup.enter="handleLogin"
+          >
             <el-form-item prop="account">
               <el-input v-model="loginForm.account" placeholder="请输入账号" :prefix-icon="User" />
             </el-form-item>
@@ -52,8 +58,13 @@ import { ref, reactive } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { accountLogin } from '@/api/loginApi'
+import { md5 } from 'js-md5'
+import { useUserStore } from '@/stores/user'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+const userStore = useUserStore()
 const loginFormRef = ref<FormInstance>()
 
 const loginForm = reactive({
@@ -68,16 +79,28 @@ const loginRules = reactive<FormRules>({
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' },
+    { min: 6, max: 30, message: '长度在 6 到 30 个字符', trigger: 'blur' },
   ],
 })
 
 const handleLogin = async () => {
   if (!loginFormRef.value) return
-  await loginFormRef.value.validate((valid, fields) => {
+  await loginFormRef.value.validate(async (valid, fields) => {
     if (valid) {
-      console.log('登录成功')
-      router.push('/')
+      try {
+        loginForm.password = md5(loginForm.password)
+        const res = await accountLogin(loginForm)
+        if (res.code === 0) {
+          userStore.setToken(res.data.token)
+          userStore.setUserInfo(res.data.user)
+          ElMessage.success('登录成功')
+          router.push('/main/childHome')
+        } else {
+          ElMessage.error(res.message || '登录失败')
+        }
+      } catch (error) {
+        ElMessage.error('登录失败，请稍后重试')
+      }
     } else {
       console.log('登录失败', fields)
     }
