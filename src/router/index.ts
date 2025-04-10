@@ -2,14 +2,12 @@
  * @Author: Walker zw37520@gmail.com
  * @Date: 2025-04-03 17:03:48
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-06 16:31:47
+ * @LastEditTime: 2025-04-10 18:08:16
  * @FilePath: /micro-main-vue3/src/router/index.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import UserLogin from '@/views/main/UserLogin.vue'
-import microApp from '@micro-zoe/micro-app'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,26 +15,15 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: '/main/childHome',
+      component: () => import('@/views/HomeView.vue'),
+      meta: { requiresAuth: true },
     },
-    /* {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },*/
     {
       path: '/login',
       name: 'login',
-      component: UserLogin,
-      meta: {
-        title: '登录',
-        keepAlive: false,
-        requireAuth: false,
-      },
+      component: () => import('@/views/main/UserLogin.vue'),
     },
+
     {
       path: '/main/childHome',
       name: 'childHome',
@@ -84,28 +71,20 @@ const router = createRouter({
 const whiteList = ['/login']
 
 router.beforeEach((to, from, next) => {
-  // 优先从 localStorage 获取数据
-  const storedData = localStorage.getItem('user')
-  const globalData = storedData
-    ? JSON.parse(storedData)
-    : (microApp.getGlobalData() as Record<string, any>)
-  const token = globalData?.token
+  const userStore = useUserStore()
 
-  // 设置页面标题
-  document.title = to.meta.title ? `${to.meta.title} - DOSS直聘` : 'DOSS直聘'
+  // 处理子应用路由
+  if (to.path.startsWith('/child-home')) {
+    // 保持在主应用的 /main/childHome 路由下
+    next('/main/childHome')
+    return
+  }
 
-  if (token) {
-    if (to.path === '/login') {
-      next('/')
-    } else {
-      next()
-    }
+  // 处理主应用的认证
+  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+    next({ name: 'login' })
   } else {
-    if (whiteList.includes(to.path)) {
-      next()
-    } else {
-      next('/login')
-    }
+    next()
   }
 })
 

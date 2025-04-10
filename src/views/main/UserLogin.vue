@@ -2,7 +2,7 @@
  * @Author: Walker zw37520@gmail.com
  * @Date: 2025-04-04 14:29:05
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-06 15:11:28
+ * @LastEditTime: 2025-04-10 16:16:01
  * @FilePath: /micro-main-vue3/src/views/main/UserLogin.vue
  * @Description: 登录页面组件
 -->
@@ -79,7 +79,7 @@ const loginRules = reactive<FormRules>({
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 30, message: '长度在 6 到 30 个字符', trigger: 'blur' },
+    { min: 6, max: 40, message: '长度在 6 到 30 个字符', trigger: 'blur' },
   ],
 })
 
