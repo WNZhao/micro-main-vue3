@@ -21,6 +21,7 @@
       iframe
       name="child-app"
       url="http://localhost:3000/child-home"
+      :disable-router="true"
     ></micro-app>
   </div>
 </template>
