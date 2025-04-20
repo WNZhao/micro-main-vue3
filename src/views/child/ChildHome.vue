@@ -14,20 +14,20 @@
       script-type="module"
     -->
     <micro-app
-      ssr
-      script-type="module"
-      :inline="true"
-      :destroy="true"
-      iframe
-      name="child-app"
-      url="http://localhost:3000/child-home"
-      :disable-router="true"
+      :name="microAppConfig.home.name"
+      :url="microAppConfig.home.url"
+      :iframe="microAppConfig.home.iframe"
+      :disable-router="microAppConfig.home.disableRouter"
+      :ssr="microAppConfig.home.ssr"
+      :script-type="microAppConfig.home.scriptType"
+      :inline="microAppConfig.home.inline"
+      :destroy="microAppConfig.home.destroy"
     ></micro-app>
   </div>
 </template>
 
 <script setup lang="ts">
-// 保持组件简单，不需要额外的逻辑
+import { microAppConfig } from '@/config/micro-app'
 </script>
 
 <style scoped lang="scss">

@@ -2,7 +2,7 @@
  * @Author: Walker zw37520@gmail.com
  * @Date: 2025-04-04 14:29:05
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-06 16:39:36
+ * @LastEditTime: 2025-04-18 13:00:11
  * @FilePath: /micro-main-vue3/src/components/CommonHeader.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -162,6 +162,7 @@ const handleCommand = async (command: string) => {
     display: flex;
     justify-content: space-between;
     padding-right: 20px;
+    border-bottom: none !important;
 
     :deep(.el-menu-item) {
       transition: all 0.3s ease;

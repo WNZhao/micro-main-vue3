@@ -2,7 +2,7 @@
  * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
  * @Date: 2025-04-03 17:03:48
  * @LastEditors: Walker zw37520@gmail.com
- * @LastEditTime: 2025-04-16 15:33:34
+ * @LastEditTime: 2025-04-18 12:34:21
  * @FilePath: /micro-main-vue3/src/App.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -44,7 +44,7 @@ const isChildJob = computed(() => route.path === '/main/childJob')
 
 .main-content {
   flex: 1;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 .main-content.login-content {

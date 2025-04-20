@@ -29,6 +29,8 @@ interface MicroAppData {
 
 // 初始化 micro-app
 microApp.start({
+  // 使用vite关闭虚拟路由系统
+
   plugins: {
     // modules: {
     //   'child-app': [
